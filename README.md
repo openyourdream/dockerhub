@@ -9,4 +9,6 @@ linux
 
 - mysql8.2.x
 
+- mysql8.3.x
+
 - redis7.x
