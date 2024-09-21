@@ -1,0 +1,56 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/zookeeper:3.9.2'
+    restart: always
+    privileged: true
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+    ports:
+      - '2181:2181'
+    network_mode: host
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_MAXCLIENTCNXNS: 1000
+    tty: true
+    container_name: zookeeper
+  kafka:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/kafka:3.8.0'
+    restart: always
+    privileged: true
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+    ports:
+      - '9092:9092'
+    network_mode: host
+    environment:
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_LOG_CLEANER_ENABLE: 'true'
+      KAFKA_BROKER_ID: 0
+      KAFKA_NUM_PARTITIONS: 4
+      KAFKA_ZOOKEEPER_CONNECT: 'localhost:2181'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://localhost:9092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092'
+    tty: true
+    depends_on:
+      - zookeeper
+    container_name: kafka  
+  kafka-manager:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/kafka-manager:1.3.1.8'                        
+    restart: unless-stopped  
+    environment:                       
+      ZK_HOSTS: 'localhost:2181'
+      APPLICATION_SECRET: hao
+      KAFKA_MANAGER_AUTH_ENABLED: "true"  
+      KAFKA_MANAGER_USERNAME: admin       
+      KAFKA_MANAGER_PASSWORD: Admin-667788
+    ports:                            
+      - "9000:9000"
+    depends_on:                         
+      - kafka
+    container_name: kafka-manager

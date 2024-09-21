@@ -1,0 +1,20 @@
+version: '3'
+services:
+  mongodb:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/mongodb:7.0.12'
+    restart: always
+    privileged: true
+    mem_limit: 4096M
+    memswap_limit: -1
+    mem_reservation: 2048M
+    oom_kill_disable: true
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      # - '/data/docker_volumes_data/mongodb:/data/db'
+    ports:
+      - '17017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Admin-667788
+    # network_mode: host
+    container_name: mongodb

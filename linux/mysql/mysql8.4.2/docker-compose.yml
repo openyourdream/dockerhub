@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mysql:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/mysql:8.4.2'
+    restart: unless-stopped
+    privileged: true
+    command:
+      - '--lower_case_table_names=1'
+      - '--max_connections=1000'
+      - '--character_set_server=utf8mb4'
+      - '--character_set_filesystem=utf8mb4'
+      - '--collation-server=utf8mb4_general_ci'
+      - '--init-connect="SET NAMES utf8mb4"'
+      - '--init_connect="SET collation_connection = utf8mb4_general_ci"'
+      - '--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      # - './config/my.cnf:/etc/my.cnf'
+      - './dbsql:/docker-entrypoint-initdb.d'   # 启动时自动运行使用工具连接脚本
+      # - '/data/docker-volumes/mysql:/var/lib/mysql'
+    ports:
+      - '13306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin-667788
+    # network_mode: host
+    container_name: mysql

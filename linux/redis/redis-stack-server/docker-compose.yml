@@ -1,0 +1,16 @@
+version: '3'
+services:
+  redis-stack-server:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/redis-stack-server:7.4.0'
+    restart: unless-stopped
+    privileged: true
+    # 添加密码为Admin-667788,默认不开启redis-aof方式持久化配置
+    environment:
+      REDIS_ARGS: "--requirepass Admin-667788 --appendonly no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      # - '/data/docker-volumes/redis:/data'
+    ports:
+      - '16379:6379'
+    # network_mode: host
+    container_name: redis-stack-server
