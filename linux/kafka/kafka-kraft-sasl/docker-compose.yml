@@ -1,0 +1,29 @@
+version: '3'
+services:
+  kafka:
+    image: 'registry.cn-hangzhou.aliyuncs.com/openyourdream/kafka:3.8.0'
+    restart: unless-stopped     # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
+    privileged: true
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,CONTROLLER://:9093   # kafka监听地址
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://192.168.8.201:9092   # 外网访问填写域名或主机IP -- 让客户端能够监听消息
+      - KAFKA_ENABLE_KRAFT=yes         # 是否启用Kafka Raft（KRaft）模式。默认值：是
+      - KAFKA_KRAFT_CLUSTER_ID:abcdefghijklmnopqrstuv    # 使用Kafka Raft（KRaft）时的Kafka集群ID。没有默认值。
+      - ALLOW_PLAINTEXT_LISTENER=yes   # 允许使用 PLAINTEXT 监听器。默认值：否。
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      # 监听的协议集合多个。（这里BROKER指的是内部，CONTROLLER是外部，之后就不能够使用PLAINTEXT作为协议名了，只能够使用定义的BROKER、CONTROLLER）
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:SASL_PLAINTEXT,CONTROLLER:PLAINTEXT  
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-512
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=SCRAM-SHA-512
+      - KAFKA_CLIENT_USERS=admin
+      - KAFKA_CLIENT_PASSWORDS=Admin-667788
+    container_name: kafka

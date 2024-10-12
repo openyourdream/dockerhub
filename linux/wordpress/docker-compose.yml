@@ -1,0 +1,36 @@
+version: '3'
+services:
+  mysql:
+    image: 'mysql:latest'
+    restart: always
+    privileged: true
+    tty: true
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - './dbsql:/docker-entrypoint-initdb.d'
+    ports:
+      - '3306:3306'
+    networks:
+      - filink-net
+    environment:
+      MYSQL_ROOT_PASSWORD: TebNmEddBf
+      MYSQL_DATABASE: wordpress
+    container_name: mysql
+  wordpress:
+    image: 'wordpress:latest'
+    restart: always
+    privileged: true
+    tty: true
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+    ports:
+      - '8080:80'
+    networks:
+      - filink-net
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: TebNmEddBf
+    container_name: wordpress
+networks:
+  filink-net: null

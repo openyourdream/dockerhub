@@ -1,0 +1,27 @@
+version: '3'
+services:
+  elasticsearch:
+    image: 'elasticsearch:8.2.3'  #原镜像docker pull elasticsearch:8.2.3
+    restart: always
+    privileged: true
+    mem_limit: 4096M
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - './elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml'
+      - '/data/docker_volumes_data/elasticsearch/data:/usr/share/elasticsearch/data'   #修改目录权限chmod 777 -R /data/docker_volumes_data/elasticsearch/data
+      # - '/data/docker_volumes_data/elasticsearch/logs:/usr/share/elasticsearch/logs'
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      TAKE_FILE_OWNERSHIP: 111
+      ES_PORT: 9200
+      ELASTIC_PASSWORD: 123456   #elastic账号密码
+    network_mode: host
+    container_name: elasticsearch8
+networks:
+  my-net: null
